@@ -5,7 +5,6 @@
 #ifndef TINYGEO_GEO_BASE_H
 #define TINYGEO_GEO_BASE_H
 
-#include <vector>
 
 namespace tinygeo
 {
@@ -20,72 +19,62 @@ namespace tinygeo
         double y;
         Coord(double x_, double y_) : x(x_), y(y_) {}
     };
-    typedef std::vector<Coord> Coords;
 
-    // For simplicity, we abstract the geometric shapes into 3 types.
-    // Some libraries define other types of geometry such as
-    // multi-point, multi-line or multi-polygon, etc. These types
-    // will be represented as a collection of primitive types in TinyGeo.
-    enum GeoType
+    // MBR define Minimum Bounding Rectangle of geometry,
+    // every MBR only store Left Lower(ll) point and Right Upper(ru) point.
+    class MBR
     {
-        POINT_TYPE = 0,
-        SEGMENT_TYPE,
-        POLYGON_TYPE
-    };
-
-
-    class Geometry
-    {
-    public:
-        Geometry();
-        virtual ~Geometry() = 0;
-
-    protected:
-        GeoType _type_;
-
-    // TODO: common operation
-
-    };
-
-    class Point : public Geometry
-    {
-    public:
-        explicit Point(const Coord& coord_) : p(coord_) {}
-        Point(double x, double y);
-
     private:
-        Coord _p_;
-
-    // TODO
-    };
-
-    class Segment : public Geometry
-    {
-    public:
-        Segment(const Coord& p1_, const Coord& p2_) : _p1_(p1_), _p2_(p2_) {}
-
-    private:
-        Coord _p1_;
-        Coord _p2_;
+        Coord _ll_;
+        Coord _ru_;
 
     public:
-        double len() const;
+        MBR(const Coord& ll_, const Coord& ru_) : _ll_(ll_), _ru_(ru_) {}
+        ~MBR() {}
 
-    // TODO
-    };
+        Coord ll() const { return _ll_; }
+        Coord ru() const { return _ru_; }
+        void set_ll(const Coord& p) { _ll_ = p; }
+        void set_ll(double x, double y) { _ll_.x = x ; _ll_.y = y; }
+        void set_ru(const Coord& p) { _ru_ = p; }
+        void set_ru(const Coord& p) { _ru_.x = x; _ru_.y = y; }
 
-    class Polygon : public Geometry
-    {
-    public:
-        explicit Polygon(const Coords& coords_);
+        double area()
+        {
+            // TODO
+        }
 
-    private:
-        Coords _coords_;
+        // update ll and ru after add an other MBR object or Coord
+        MBR& add(const MBR& rh)
+        {
+            // TODO
+            return *this;
+        }
 
-    public:
-        double area() const;
+        MBR& add(const Coord& p)
+        {
+            // TODO
+            return *this;
+        }
 
-    // TODO
+        MBR& expand(double range)
+        {
+            // TODO
+            return *this;
+        }
+
+        bool is_contain(const MBR& rh)
+        {
+            // TODO
+            return false;
+        }
+
+        bool is_intersect(const MBR& rh)
+        {
+            // TODO
+            return false;
+        }
+
     };
 
 } // namespace tinygeo
