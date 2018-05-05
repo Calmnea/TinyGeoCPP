@@ -5,6 +5,7 @@
 #ifndef TINYGEO_GEO_BASE_H
 #define TINYGEO_GEO_BASE_H
 
+#include <cmath>
 
 namespace tinygeo
 {
@@ -35,38 +36,49 @@ namespace tinygeo
         Coord ll() const { return _ll_; }
         Coord ru() const { return _ru_; }
         void set_ll(const Coord& p) { _ll_ = p; }
-        void set_ll(double x, double y) { _ll_.x = x ; _ll_.y = y; }
+        void set_ll(double x, double y) { _ll_.x = x; _ll_.y = y; }
         void set_ru(const Coord& p) { _ru_ = p; }
         void set_ru(const Coord& p) { _ru_.x = x; _ru_.y = y; }
 
         double area()
         {
-            // TODO
+            return abs((ru.y - ll.y) * (ru.x - ll.x));
         }
 
         // update ll and ru after add an other MBR object or Coord
         MBR& add(const MBR& rh)
         {
-            // TODO
+            if (rh.ll().x < _ll_.x) _ll_.x = rh.ll().x;
+            if (rh.ll().y < _ll_.y) _ll_.y = rh.ll().y;
+            if (rh.ru().x > _ru_.x) _ru_.x = rh.ru().x;
+            if (rh.ru().y > _ru_.y) _ru_.y = rh.ru().y;
             return *this;
         }
 
         MBR& add(const Coord& p)
         {
-            // TODO
+            if (p.x < _ll_.x) _ll_.x = p.x;
+            if (p.y < _ll_.y) _ll_.y = p.y;
+            if (p.x > _ru_.x) _ru_.x = p.x;
+            if (p.y > _ru_.y) _ru_.y = p.y;
             return *this;
         }
 
+        // expand MBR`s width and height
         MBR& expand(double range)
         {
-            // TODO
+            // TODO: negative process
+            _ll_.x -= range;
+            _ll_.y -= range;
+            _ru_.x += range;
+            _ru_.y += range;
             return *this;
         }
 
         bool is_contain(const MBR& rh)
         {
-            // TODO
-            return false;
+            return ((_ll_.x < rh.ll().x) && (_ll_.y < rh.ll().y) &&
+                    (_ru_.x > rh.ru().x) && (_ru_.y > rh.ru().y));
         }
 
         bool is_intersect(const MBR& rh)
