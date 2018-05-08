@@ -6,6 +6,7 @@
 #define TINYGEO_GEO_BASE_H
 
 #include <cmath>
+#include <iostream>
 
 namespace tinygeo
 {
@@ -68,6 +69,16 @@ namespace tinygeo
         MBR& expand(double range)
         {
             // TODO: negative process
+            if (range < 0)
+            {
+                if ((range <= (_ll_.x - _ru_.x) * 0.5) ||
+                    (range <= (_ll_.y - _ru_.x) * 0.5))
+                {
+                    std::cerr << "[Error] expand range less-then width or height of MBR." << std::endl;
+                    exit(-1);
+                }
+            }
+
             _ll_.x -= range;
             _ll_.y -= range;
             _ru_.x += range;
@@ -83,8 +94,10 @@ namespace tinygeo
 
         bool is_intersect(const MBR& rh)
         {
-            // TODO
-            return false;
+            if (this->is_contain(rh) || rh.is_contain(*this)) return false;
+            if (_ll_.x > rh.ru().x || _ll_.y > rh.ru().y) return false;
+            if (_ru_.x < rh.ll().x || _ru_.y < rh.ll().y) return false;
+            return true;
         }
 
     };
